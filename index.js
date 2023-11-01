@@ -28,11 +28,11 @@ const displayMovies = async movieDetails => {
     moviesCards.innerHTML='';
     console.log("display",movieDetails);
     const movieContainer = document.createElement('div');
-    // movieContainer.classList.add(movie-container);
+    movieContainer.classList.add('movie-container');
     await movieDetails.Search.forEach(movie => {
         console.log("movie",movie);
         const movieCard = document.createElement('div');
-        // movieCard.classList.add("movie-details");
+        movieCard.classList.add('movie-details');
         movieCard.innerHTML=`
         <img src="${movie.Poster?movie.Poster:"https://www.shutterstock.com/shutterstock/photos/586719869/display_1500/stock-vector-online-cinema-art-movie-watching-with-popcorn-and-film-strip-cinematograph-concept-vintage-retro-586719869.jpg"}" alt="${movie.Title}">
       <h3>${movie.Title}</h3>
@@ -67,6 +67,18 @@ const searchMovies = async () => {
     const searchTerm = searchInput.value;
     const movieDetails = await getData(searchTerm,currentPage);
     console.log("searchMovies data", movieDetails);
+
+    if (movieDetails.Response === 'False') {
+        if (movieDetails.Error === 'Too many results.') {
+            moviesCards.innerHTML = '<p>Too many results. Please provide a more specific search term.</p>';
+            paginationPart.innerHTML = '';
+        } else {
+            moviesCards.innerHTML = `<p>Error: ${movieDetails.Error}</p>`;
+            paginationPart.innerHTML = '';
+        }
+        return;
+      }
+
     totalPage = parseInt(movieDetails.totalResults);
     console.log("totalPages searchMovies", totalPage);
     displayMovies(movieDetails);
